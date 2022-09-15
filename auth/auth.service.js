@@ -48,8 +48,26 @@ async function isAuthenticated(req, res, next) {
   return true;
 }
 
+function verifyRole(roles) {
+  return async (req, res, next) => {
+    try {
+      const { role } = req.user;
+      if ([].concat(roles).includes(role)) {
+        next();
+      } else {
+        res.status(409);
+        res.send({ error: 'Not authorized' });
+      }
+    } catch (error) {
+      res.status(409);
+      res.send({ error: 'Not authorized' });
+    }
+  };
+}
+
 module.exports = {
   signToken,
   verfyToken,
   isAuthenticated,
+  verifyRole,
 };
