@@ -1,0 +1,14 @@
+{
+  "name": "myrestaurantapp",
+  "version": "1.0.0",
+  "description": "An app that manages your restaurant's products and buy online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AdrianVilla",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
