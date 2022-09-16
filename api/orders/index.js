@@ -8,15 +8,15 @@ const {
   getSingleOrderHandler,
   getClientOrdersHandler,
   updateOrderHandler,
-} = require('./orders.controller');
+} = require('./orders.controllers');
 
 const router = Router();
 
-router.get('/', getAllOrdersHandler);
-router.post('/', isAuthenticated, verifyRole(['ADMIN']), createOrderHandler);
+router.get('/', isAuthenticated, verifyRole(['ADMIN']), getAllOrdersHandler);
+router.post('/', isAuthenticated, verifyRole(['CLIENT']), createOrderHandler);
 router.get('/:id', getSingleOrderHandler);
-router.get('/byClientId/:client', getClientOrdersHandler);
-router.patch('/:id', OrderValidator, isAuthenticated, verifyRole(['ADMIN']), updateOrderHandler);
+router.get('/byClientId/:clientId', isAuthenticated, verifyRole(['CLIENT']), getClientOrdersHandler);
+router.patch('/:id', isAuthenticated, verifyRole(['ADMIN']), updateOrderHandler);
 router.delete('/:id', isAuthenticated, verifyRole(['ADMIN']), deleteOrderHandler);
 
 module.exports = router;

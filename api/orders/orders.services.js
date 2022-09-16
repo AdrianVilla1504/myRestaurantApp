@@ -14,9 +14,8 @@ function createOrder(order) {
 }
 
 function getClientOrders(order) {
-  const clientId = order.client;
-  const clientName = order.name;
-  return Order.find({ clientId: `${clientId}`, clientName: `${clientName}`});
+  const cliente = order.clientId;
+  return Order.find({ clientId: `${cliente}`});
 }
 
 function updateOrder(id, order) {

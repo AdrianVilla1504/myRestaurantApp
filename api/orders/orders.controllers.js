@@ -33,10 +33,10 @@ async function getSingleOrderHandler(req, res) {
 
 async function createOrderHandler(req, res) {
   const orderData = req.body;
-  const { _id } = req.user;
-  console.log(OrderData);
+  const { _id, name, phone} = req.user;
+  console.log(orderData);
   try {
-    const order = await createOrder({ ...orderData, host: _id });
+    const order = await createOrder({ ...orderData, clientId: _id, clientName: name, clientPhone: phone });
     return res.status(201).json(order);
   } catch (error) {
     console.log(error);
@@ -47,9 +47,8 @@ async function createOrderHandler(req, res) {
 async function getClientOrdersHandler(req, res) {
   try {
     const clientId = req.params;
-    const clientName = request.params;
-    console.log(clientId, clientName);
-    const order = await getClientOrders(clientId, clientName);
+    console.log(clientId);
+    const order = await getClientOrders(clientId);
     return res.status(200).json(order);
   } catch (error) {
     console.log(error);

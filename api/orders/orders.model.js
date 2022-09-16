@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const User = require('../users/users.model');
 
 const OrderSchema = new mongoose.Schema({
-  clientName: {
-    type: mongoose.Schema.Types.name,
+clientName: {
+    type: mongoose.Schema.Types.String,
     ref: User,
     require: true,
   },
   clientId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: User,
     require: true,
   },
@@ -47,12 +47,18 @@ const OrderSchema = new mongoose.Schema({
     }
   },
   clientPhone: {
-    type: mongoose.Schema.Types.phone,
+    type: mongoose.Schema.Types.String,
     ref: User,
     require: true,
+  },
+  status:{
+    type: String,
+    enum: ['PLACED', 'PREPARATION', 'SENT', 'DELIVERED'],
+    default: 'PLACED',
+    required: true,
   },
 }, { timestamps: true });
 
 const Order = mongoose.model('order', OrderSchema);
 
-module.exports = Space;
+module.exports = Order;
