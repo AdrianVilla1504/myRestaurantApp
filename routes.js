@@ -10,7 +10,6 @@ function routes(app) {
   app.use('/api/products', products);
   app.use('/auth/local', authLocal);
 
-
 }
 
 module.exports = routes;
