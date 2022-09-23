@@ -29,6 +29,19 @@ const UserSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 }, { timestamps: true });
 
+UserSchema.virtual('profile').get(function () {
+  const {
+    name, email, role, phone
+  } = this;
+
+  return {
+    name,
+    email,
+    role,
+    phone,
+  };
+});
+
 UserSchema.pre('save', async function save(next) {
   const user = this;
 

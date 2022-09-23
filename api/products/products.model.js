@@ -24,6 +24,10 @@ const ProductSchema = new mongoose.Schema({
     enum: ['FOOD', 'DRINK'],
     default: 'FOOD',
   },
+  qty:{
+    type: Number,
+    default: 1,
+  },
 }, { timestamps: true });
 
 const Product = mongoose.model('product', ProductSchema);

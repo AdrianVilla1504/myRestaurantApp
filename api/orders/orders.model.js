@@ -12,22 +12,35 @@ clientName: {
     ref: User,
     require: true,
   },
-  products: [
-    {
-      productName: {
-        type: String,
-        required: true,
-      },
-      productId: {
-        type: String,
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      }
-    }
-  ],
+  cart: [{
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    img: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ['FOOD', 'DRINK'],
+      default: 'FOOD',
+    },
+    qty:{
+      type: Number,
+      default: 1,
+    },
+  }],
   address: {
     neighborhood: {
       type: String,
@@ -55,6 +68,10 @@ clientName: {
     type: String,
     enum: ['PLACED', 'PREPARATION', 'SENT', 'DELIVERED'],
     default: 'PLACED',
+    required: true,
+  },
+  totalCost: {
+    type: Number,
     required: true,
   },
 }, { timestamps: true });
