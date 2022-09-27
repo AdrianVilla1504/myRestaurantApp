@@ -65,6 +65,7 @@ async function deleteProductHandler(req, res) {
 
     return res.json(product);
   } catch (error) {
+    console.log("error", error);
     return res.status(500).json({ error });
   }
 }

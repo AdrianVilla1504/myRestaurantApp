@@ -52,6 +52,7 @@ async function createUserHandler(req, res) {
     const user = await createUser(userData);
     return res.status(201).json(user);
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: error.message });
   }
 }
