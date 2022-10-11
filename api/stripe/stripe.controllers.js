@@ -4,7 +4,10 @@ const STRIPEKEY = process.env.STRIPE_KEY;
 const stripe =  require("stripe")(STRIPEKEY);
 
 async function paymentTry(req, res) {
-  const { items } = req.body;
+
+  const { profile, items } = req.body;
+  console.log("items", items)
+  const cemail = profile.email;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -13,11 +16,99 @@ async function paymentTry(req, res) {
     automatic_payment_methods: {
       enabled: true,
     },
+    receipt_email: cemail,
   });
 
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
+
 }
+
+/* async function invoicing(req, res)
+{
+  const { profile, items } = req.body;
+  console.log("items", items)
+  const itemsInvoice = items[0]
+  const dataInvoice = [];
+  itemsInvoice.forEach( (item) => {
+     dataInvoice.push({
+      id: item._id,
+      amount: (item.price)*100,
+      amount_excluding_tax: (item.price*item.qty)*100,
+      currency: "usd",
+      price:{
+        billing_scheme: "per_unit",
+        currency: "usd",
+        unit_amount: (item.price)*100,
+      },
+      quantity: item.qty,
+      subscription: null,
+     })
+  })
+
+ console.log(dataInvoice);
+
+  const invoice = await stripe.invoices.create({
+    customer_name: profile.name,
+    customer_email: profile.email,
+    lines: {
+      object: "list",
+      data: dataInvoice,
+      has_more: false,
+    },
+    paid: true,
+    status: "paid",
+    subscription: null,
+    subtotal: calculateOrderAmount(items),
+    subtotal_excluding_tax: calculateOrderAmount(items),
+    total: calculateOrderAmount(items),
+    total_excluding_tax: calculateOrderAmount(items),
+  });
+
+  const invoiceToSend = await stripe.invoices.sendInvoice(invoice.id);
+
+  res.send(invoiceToSend);
+
+} */
+
+
+
+/* const sendInvoice = async function (email) {
+  // Look up a customer in your database
+  let customer = CUSTOMERS.find(c => c.email === email);
+  let customerId;
+  if (!customer) {
+    // Create a new Customer
+    customer = await stripe.customers.create({
+      email,
+      description: 'Customer to invoice',
+    });
+    // Store the Customer ID in your database to use for future purchases
+    CUSTOMERS.push({stripeId: customer.id, email: email});
+    customerId = customer.id;
+  } else {
+    // Read the Customer ID from your database
+    customerId = customer.stripeId;
+  }
+
+  // Create an Invoice
+  const invoice = await stripe.invoices.create({
+    customer: customerId,
+    collection_method: 'send_invoice',
+    days_until_due: 30,
+  });
+
+  // Create an Invoice Item with the Price, and Customer you want to charge
+  const invoiceItem = await stripe.invoiceItems.create({
+    customer: customerId,
+    price: PRICES.basic,
+    invoice: invoice.id
+  });
+
+  // Send the Invoice
+  await stripe.invoices.sendInvoice(invoice.id);
+}; */
+
 
 module.exports = paymentTry;

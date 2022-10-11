@@ -3,6 +3,6 @@ const paymentTry = require('./stripe.controllers');
 
 const router = Router();
 
-router.post("/createPaymentIntent", paymentTry );
+router.post("/createPaymentIntent", paymentTry);
 
 module.exports = router;
