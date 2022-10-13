@@ -5,8 +5,12 @@ const configExpress = require('./config/express');
 const routes = require('./routes');
 const connectDB = require('./config/database');
 const stripeConfig = require('./config/stripe');
+const cors = require('cors')
+
 
 const app = express();
+
+app.use(cors())
 
 const PORT = process.env.PORT || 8080;
 

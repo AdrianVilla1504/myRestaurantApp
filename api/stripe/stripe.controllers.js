@@ -1,12 +1,12 @@
-require('dotenv').config();
-const calculateOrderAmount = require('./stripe.services');
-const STRIPEKEY = process.env.STRIPE_KEY;
-const stripe =  require("stripe")(STRIPEKEY);
+require("dotenv").config();
+const calculateOrderAmount = require("./stripe.services");
+const stripe = require("stripe")(process.env.STRIPE_KEY);
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 async function paymentTry(req, res) {
 
   const { profile, items } = req.body;
-  console.log("items", items)
   const cemail = profile.email;
 
   // Create a PaymentIntent with the order amount and currency
@@ -23,7 +23,34 @@ async function paymentTry(req, res) {
     clientSecret: paymentIntent.client_secret,
   });
 
+  const receiptemail = async () => {
+    const product = items[0];
+    const customername = profile.name;
+    console.log(profile);
+    const msg = {
+      to: profile.email, // Change to your recipient
+      from: "adriancvilla@gmail.com", // Change to your verified sender
+      subject: "Receipt of your orders",
+      template_id: 'd-6e4e0084952946fabae7b74c4077bb3a',
+      dynamic_template_data: {
+        clientname: customername,
+        phone: profile.phone,
+        receiptItems: {item: product},
+        totalcost: calculateOrderAmount(items)/100,
+      }
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log("The e-mail has been sent to the client");
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  receiptemail();
 }
+
 
 /* async function invoicing(req, res)
 {
@@ -72,8 +99,6 @@ async function paymentTry(req, res) {
 
 } */
 
-
-
 /* const sendInvoice = async function (email) {
   // Look up a customer in your database
   let customer = CUSTOMERS.find(c => c.email === email);
@@ -109,6 +134,5 @@ async function paymentTry(req, res) {
   // Send the Invoice
   await stripe.invoices.sendInvoice(invoice.id);
 }; */
-
 
 module.exports = paymentTry;
