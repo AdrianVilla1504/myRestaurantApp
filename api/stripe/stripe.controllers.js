@@ -1,43 +1,50 @@
 require("dotenv").config();
 const calculateOrderAmount = require("./stripe.services");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
-/* const sgMail = require("@sendgrid/mail");
-console.log("API KEY",process.env.SENDGRID_API_KEY)
-sgMail.setApiKey(process.env.SENDGRID_API_KEY); */
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function paymentTry(req, res) {
+  async function paymentTry(req, res) {
 
-  const { profile, items } = req.body;
-  const cemail = profile.email;
+    const { profile, items } = req.body;
+    const cemail = profile.email;
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
-    currency: "usd",
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    receipt_email: cemail,
-  });
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(items),
+      currency: "usd",
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      receipt_email: cemail,
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  }
 
-/*   const receiptemail = async () => {
-    const product = items[0];
-    const customername = profile.name;
-    console.log(profile);
+  const receiptemail = async (req) => {
+    const { profile, cart } = req.body;
+    let totalCost = 0;
+    cart?.forEach((product)=>{
+      totalCost += product.price*product.qty
+    })
+
+    console.log("profile receipt", profile);
+    console.log("Products receipt", cart);
+    console.log("Total to pay:", totalCost)
+
     const msg = {
       to: profile.email, // Change to your recipient
       from: "adriancvilla@gmail.com", // Change to your verified sender
-      subject: "Receipt of your order",
+      subject: `Here is your order receipt ${profile.name}`,
       template_id: 'd-6e4e0084952946fabae7b74c4077bb3a',
       dynamic_template_data: {
-        clientname: customername,
+        clientname: profile.name,
         phone: profile.phone,
-        receiptItems: {item: product},
-        totalcost: calculateOrderAmount(items)/100,
+        receiptItems: {item: cart},
+        totalcost: totalCost,
       }
     };
 
@@ -48,9 +55,6 @@ async function paymentTry(req, res) {
       console.log(error);
     }
   }
-
-  receiptemail(); */
-}
 
 
 /* async function invoicing(req, res)
@@ -136,4 +140,4 @@ async function paymentTry(req, res) {
   await stripe.invoices.sendInvoice(invoice.id);
 }; */
 
-module.exports = paymentTry;
+module.exports = {paymentTry, receiptemail} ;
