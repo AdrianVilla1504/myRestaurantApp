@@ -1,8 +1,9 @@
 require("dotenv").config();
 const calculateOrderAmount = require("./stripe.services");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+/* const sgMail = require("@sendgrid/mail");
+console.log("API KEY",process.env.SENDGRID_API_KEY)
+sgMail.setApiKey(process.env.SENDGRID_API_KEY); */
 
 async function paymentTry(req, res) {
 
@@ -23,14 +24,14 @@ async function paymentTry(req, res) {
     clientSecret: paymentIntent.client_secret,
   });
 
-  const receiptemail = async () => {
+/*   const receiptemail = async () => {
     const product = items[0];
     const customername = profile.name;
     console.log(profile);
     const msg = {
       to: profile.email, // Change to your recipient
       from: "adriancvilla@gmail.com", // Change to your verified sender
-      subject: "Receipt of your orders",
+      subject: "Receipt of your order",
       template_id: 'd-6e4e0084952946fabae7b74c4077bb3a',
       dynamic_template_data: {
         clientname: customername,
@@ -48,7 +49,7 @@ async function paymentTry(req, res) {
     }
   }
 
-  receiptemail();
+  receiptemail(); */
 }
 
 
@@ -57,7 +58,7 @@ async function paymentTry(req, res) {
   const { profile, items } = req.body;
   console.log("items", items)
   const itemsInvoice = items[0]
-  const dataInvoice = [];
+  const dataInvoice = 0;
   itemsInvoice.forEach( (item) => {
      dataInvoice.push({
       id: item._id,
