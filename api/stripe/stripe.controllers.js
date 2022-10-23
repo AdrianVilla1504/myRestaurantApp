@@ -38,7 +38,7 @@ const receiptemail = async (req) => {
 
   const msg = {
     to: profile.email, // Change to your recipient
-    from: process.env.SENDGRID_RECEIPT_ADDRESS, // Change to your verified sender
+    from: "adriancvilla@gmail.com", // Change to your verified sender
     subject: `Here is your order receipt`,
     template_id: "d-6e4e0084952946fabae7b74c4077bb3a",
     dynamic_template_data: {
