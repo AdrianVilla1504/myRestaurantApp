@@ -4,6 +4,7 @@
   "description": "An app that manages your restaurant's products and buy online",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "author": "AdrianVilla",

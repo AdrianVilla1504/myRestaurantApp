@@ -27,125 +27,34 @@ const receiptemail = async (req) => {
   const { profile, cart } = req.body;
   let controllerSent = 0;
 
-  if (controllerSent === 0 && profile) {
-    controllerSent = 1;
-    if (controllerSent === 1) {
-      let totalCost = 0;
-      cart?.forEach((product) => {
-        totalCost += product.price * product.qty;
-      });
+  let totalCost = 0;
+  cart?.forEach((product) => {
+    totalCost += product.price * product.qty;
+  });
 
-      console.log("profile receipt", profile);
-      console.log("Products receipt", cart);
-      console.log("Total to pay:", totalCost);
+  console.log("profile receipt", profile);
+  console.log("Products receipt", cart);
+  console.log("Total to pay:", totalCost);
 
-      const msg = {
-        to: profile.email, // Change to your recipient
-        from: "adriancvilla@gmail.com", // Change to your verified sender
-        subject: `Here is your order receipt ${profile.name}`,
-        template_id: "d-6e4e0084952946fabae7b74c4077bb3a",
-        dynamic_template_data: {
-          clientname: profile.name,
-          phone: profile.phone,
-          receiptItems: { item: cart },
-          totalcost: totalCost,
-        },
-      };
-
-      try {
-        await sgMail.send(msg);
-        console.log("The e-mail has been sent to the client");
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  } else {
-    controllerSent = 0;
-  }
-
-};
-
-/* async function invoicing(req, res)
-{
-  const { profile, items } = req.body;
-  console.log("items", items)
-  const itemsInvoice = items[0]
-  const dataInvoice = 0;
-  itemsInvoice.forEach( (item) => {
-     dataInvoice.push({
-      id: item._id,
-      amount: (item.price)*100,
-      amount_excluding_tax: (item.price*item.qty)*100,
-      currency: "usd",
-      price:{
-        billing_scheme: "per_unit",
-        currency: "usd",
-        unit_amount: (item.price)*100,
-      },
-      quantity: item.qty,
-      subscription: null,
-     })
-  })
-
- console.log(dataInvoice);
-
-  const invoice = await stripe.invoices.create({
-    customer_name: profile.name,
-    customer_email: profile.email,
-    lines: {
-      object: "list",
-      data: dataInvoice,
-      has_more: false,
+  const msg = {
+    to: profile.email, // Change to your recipient
+    from: process.env.SENDGRID_RECEIPT_ADDRESS, // Change to your verified sender
+    subject: `Here is your order receipt`,
+    template_id: "d-6e4e0084952946fabae7b74c4077bb3a",
+    dynamic_template_data: {
+      clientname: profile?.name,
+      phone: profile.phone,
+      receiptItems: { item: cart },
+      totalcost: totalCost,
     },
-    paid: true,
-    status: "paid",
-    subscription: null,
-    subtotal: calculateOrderAmount(items),
-    subtotal_excluding_tax: calculateOrderAmount(items),
-    total: calculateOrderAmount(items),
-    total_excluding_tax: calculateOrderAmount(items),
-  });
+  };
 
-  const invoiceToSend = await stripe.invoices.sendInvoice(invoice.id);
-
-  res.send(invoiceToSend);
-
-} */
-
-/* const sendInvoice = async function (email) {
-  // Look up a customer in your database
-  let customer = CUSTOMERS.find(c => c.email === email);
-  let customerId;
-  if (!customer) {
-    // Create a new Customer
-    customer = await stripe.customers.create({
-      email,
-      description: 'Customer to invoice',
-    });
-    // Store the Customer ID in your database to use for future purchases
-    CUSTOMERS.push({stripeId: customer.id, email: email});
-    customerId = customer.id;
-  } else {
-    // Read the Customer ID from your database
-    customerId = customer.stripeId;
+  try {
+    await sgMail.send(msg);
+    console.log("The e-mail has been sent to the client");
+  } catch (error) {
+    console.log(error);
   }
-
-  // Create an Invoice
-  const invoice = await stripe.invoices.create({
-    customer: customerId,
-    collection_method: 'send_invoice',
-    days_until_due: 30,
-  });
-
-  // Create an Invoice Item with the Price, and Customer you want to charge
-  const invoiceItem = await stripe.invoiceItems.create({
-    customer: customerId,
-    price: PRICES.basic,
-    invoice: invoice.id
-  });
-
-  // Send the Invoice
-  await stripe.invoices.sendInvoice(invoice.id);
-}; */
+};
 
 module.exports = { paymentTry, receiptemail };
